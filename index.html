@@ -6,29 +6,28 @@
   <title>Japanese AI Tutor</title>
   <style>
     :root {
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-      --primary: #4338ca;
-      --primary-hover: #3730a3;
-      --text: #1e293b;
-      --muted: #64748b;
-      --border: #e2e8f0;
-      --male-tag: #0284c7;
-      --female-tag: #db2777;
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --card-border: #334155;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --masc: #0284c7;
+      --fem: #db2777;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Sans", sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
       background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
-      padding: 1rem;
+      color: var(--text-main);
+      padding: 1.5rem 1rem;
       display: flex;
       justify-content: center;
     }
-    .container {
+    .wrapper {
       width: 100%;
-      max-width: 680px;
+      max-width: 760px;
       display: flex;
       flex-direction: column;
       gap: 1.25rem;
@@ -37,245 +36,368 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--card-border);
     }
-    h1 { font-size: 1.4rem; color: var(--primary); }
-    .key-btn {
-      background: none;
-      border: 1px solid var(--border);
-      padding: 0.4rem 0.75rem;
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+    .settings-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      padding: 0.4rem 0.8rem;
       border-radius: 6px;
       cursor: pointer;
       font-size: 0.85rem;
     }
-    #keyDrawer {
+    #settingsDrawer {
       display: none;
       background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
       padding: 1rem;
-      border-radius: 8px;
-      border: 1px solid var(--border);
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.6rem;
     }
-    .toggle-group {
-      display: flex;
-      background: var(--border);
-      border-radius: 8px;
-      padding: 3px;
-    }
-    .toggle-btn {
+    .input-row { display: flex; gap: 0.5rem; }
+    .input-row input {
       flex: 1;
-      padding: 0.5rem;
-      border: none;
-      background: none;
+      padding: 0.5rem 0.75rem;
+      background: #0b1120;
+      border: 1px solid var(--card-border);
+      color: #fff;
       border-radius: 6px;
-      font-weight: 600;
+    }
+    .input-row button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
       cursor: pointer;
-      transition: all 0.2s;
-      text-align: center;
+      font-weight: 600;
     }
-    .toggle-btn.active {
-      background: var(--card-bg);
-      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    }
-    .toggle-btn.active[data-mode="masculine"] { color: var(--male-tag); }
-    .toggle-btn.active[data-mode="feminine"] { color: var(--female-tag); }
     .card {
       background: var(--card-bg);
-      border-radius: 10px;
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
       padding: 1.25rem;
-      border: 1px solid var(--border);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    /* Mode Toggle */
+    .register-switcher {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      background: #0b1120;
+      padding: 4px;
+      border-radius: 8px;
+    }
+    .reg-btn {
+      padding: 0.6rem;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.95rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .reg-btn.active.masc {
+      background: var(--masc);
+      color: #fff;
+    }
+    .reg-btn.active.fem {
+      background: var(--fem);
+      color: #fff;
     }
     textarea {
       width: 100%;
       height: 90px;
+      background: #0b1120;
+      border: 1px solid var(--card-border);
+      color: var(--text-main);
+      border-radius: 8px;
       padding: 0.75rem;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-      resize: vertical;
       font-size: 1rem;
       outline: none;
+      resize: vertical;
     }
-    textarea:focus { border-color: var(--primary); }
-    .action-row {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: 0.5rem;
-    }
-    .submit-btn {
-      background: var(--primary);
-      color: white;
+    textarea:focus { border-color: var(--accent); }
+    .ask-btn {
+      align-self: flex-end;
+      background: var(--accent);
+      color: #fff;
       border: none;
-      padding: 0.6rem 1.25rem;
+      padding: 0.65rem 1.4rem;
       border-radius: 6px;
       font-weight: 600;
       cursor: pointer;
+      transition: background 0.15s;
     }
-    .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-    .response-card { display: flex; flex-direction: column; gap: 0.75rem; }
-    .jp-text {
-      font-size: 1.6rem;
-      font-weight: 600;
+    .ask-btn:hover { background: var(--accent-hover); }
+    .ask-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* Results */
+    #outputContainer {
+      display: none;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+    .japanese-header {
       display: flex;
+      justify-content: space-between;
       align-items: center;
-      gap: 0.5rem;
+      gap: 1rem;
+      border-bottom: 1px solid var(--card-border);
+      padding-bottom: 1rem;
     }
-    .audio-btn {
-      background: none;
-      border: 1px solid var(--border);
+    .japanese-display {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #fff;
+      line-height: 1.6;
+    }
+    ruby rt {
+      font-size: 0.55em;
+      color: var(--text-muted);
+      user-select: none;
+    }
+    .voice-btn {
+      background: #334155;
+      border: 1px solid #475569;
+      color: #fff;
+      width: 48px;
+      height: 48px;
       border-radius: 50%;
-      width: 34px;
-      height: 34px;
       cursor: pointer;
+      font-size: 1.3rem;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.1rem;
+      flex-shrink: 0;
+      transition: transform 0.1s ease, background 0.2s;
     }
-    .phonetics { font-size: 0.95rem; color: var(--muted); }
-    .grammar {
-      border-top: 1px solid var(--border);
-      padding-top: 0.75rem;
+    .voice-btn:hover {
+      background: #475569;
+      transform: scale(1.05);
+    }
+    .voice-btn:active {
+      transform: scale(0.95);
+    }
+    .phonetic-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      background: #0b1120;
+      padding: 0.85rem 1rem;
+      border-radius: 8px;
       font-size: 0.95rem;
+    }
+    .phonetic-grid span {
+      display: block;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 2px;
+    }
+    .explanation-box {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #cbd5e1;
       white-space: pre-wrap;
     }
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="wrapper">
     <header>
       <h1>日本語 AI Tutor</h1>
-      <button class="key-btn" onclick="toggleKeyDrawer()">🔑 Settings</button>
+      <button class="settings-btn" onclick="toggleSettings()">🔑 Settings</button>
     </header>
 
-    <div id="keyDrawer">
-      <label for="apiKey" style="font-size: 0.85rem; font-weight: 600;">Gemini API Key</label>
-      <input type="password" id="apiKey" placeholder="AIzaSy..." style="padding: 0.5rem; border: 1px solid var(--border); border-radius: 4px;" />
-      <button onclick="saveApiKey()" style="padding: 0.4rem; background: var(--primary); color: #fff; border: none; border-radius: 4px; cursor: pointer;">Save Key to Browser</button>
-    </div>
-
-    <!-- Speech Register Selector -->
-    <div class="toggle-group">
-      <button class="toggle-btn active" data-mode="masculine" onclick="setMode('masculine')">Masculine Register (僕 / だ / ぞ)</button>
-      <button class="toggle-btn" data-mode="feminine" onclick="setMode('feminine')">Feminine Register (私 / ね / わ)</button>
+    <div id="settingsDrawer">
+      <p style="font-size: 0.85rem; color: var(--text-muted);">Enter Gemini API Key (stored locally in browser only):</p>
+      <div class="input-row">
+        <input type="password" id="apiKeyInput" placeholder="AIzaSy..." />
+        <button onclick="saveApiKey()">Save</button>
+      </div>
     </div>
 
     <div class="card">
-      <textarea id="promptInput" placeholder="Enter an English sentence, phrase, or Japanese grammar question..."></textarea>
-      <div class="action-row">
-        <button id="sendBtn" class="submit-btn" onclick="askTutor()">Ask Tutor</button>
+      <div class="register-switcher">
+        <button class="reg-btn active masc" id="btnMasc" onclick="selectRegister('masculine')">Masculine Register (僕 / だ / ぞ)</button>
+        <button class="reg-btn fem" id="btnFem" onclick="selectRegister('feminine')">Feminine Register (私 / ね / わ)</button>
       </div>
+
+      <textarea id="promptText" placeholder="Enter an English phrase or Japanese grammar question..."></textarea>
+      <button class="ask-btn" id="submitBtn" onclick="requestExplanation()">Ask Tutor</button>
     </div>
 
-    <div id="resultCard" class="card response-card" style="display: none;">
-      <div class="jp-text">
-        <span id="outJapanese"></span>
-        <button class="audio-btn" onclick="playAudio()" title="Listen">🔊</button>
+    <!-- Output Section -->
+    <div id="outputContainer" class="card">
+      <div class="japanese-header">
+        <div class="japanese-display" id="outJapanese"></div>
+        <button class="voice-btn" id="speakButton" onclick="speakJapanese()" title="Listen to pronunciation">🔊</button>
       </div>
-      <div class="phonetics">
-        <div><strong>Romaji:</strong> <span id="outRomaji"></span></div>
-        <div><strong>Pronunciation:</strong> <span id="outPhonetic"></span></div>
+
+      <div class="phonetic-grid">
+        <div>
+          <span>Hepburn Romaji</span>
+          <div id="outRomaji" style="color: #fff; font-weight: 500;"></div>
+        </div>
+        <div>
+          <span>English Phonetics</span>
+          <div id="outPhonetic" style="color: #fff; font-weight: 500;"></div>
+        </div>
       </div>
-      <div class="grammar" id="outExplanation"></div>
+
+      <div class="explanation-box" id="outExplanation"></div>
     </div>
   </div>
 
   <script>
-    let activeMode = "masculine";
+    let activeRegister = "masculine";
+    let textToSpeak = "";
 
     window.onload = () => {
-      const stored = localStorage.getItem("gemini_tutor_api_key");
-      if (stored) {
-        document.getElementById("apiKey").value = stored;
+      // Check query params for key
+      const params = new URLSearchParams(window.location.search);
+      const urlKey = params.get('key');
+      if (urlKey) {
+        localStorage.setItem("jp_gemini_api_key", urlKey);
+      }
+
+      const savedKey = localStorage.getItem("jp_gemini_api_key");
+      if (savedKey) {
+        document.getElementById("apiKeyInput").value = savedKey;
       } else {
-        document.getElementById("keyDrawer").style.display = "flex";
+        document.getElementById("settingsDrawer").style.display = "flex";
       }
     };
 
-    function toggleKeyDrawer() {
-      const drawer = document.getElementById("keyDrawer");
+    function toggleSettings() {
+      const drawer = document.getElementById("settingsDrawer");
       drawer.style.display = drawer.style.display === "flex" ? "none" : "flex";
     }
 
     function saveApiKey() {
-      const val = document.getElementById("apiKey").value.trim();
-      localStorage.setItem("gemini_tutor_api_key", val);
-      alert("API Key saved to your browser!");
-      document.getElementById("keyDrawer").style.display = "none";
+      const key = document.getElementById("apiKeyInput").value.trim();
+      if (!key) return;
+      localStorage.setItem("jp_gemini_api_key", key);
+      alert("API Key saved.");
+      document.getElementById("settingsDrawer").style.display = "none";
     }
 
-    function setMode(mode) {
-      activeMode = mode;
-      document.querySelectorAll(".toggle-btn").forEach(btn => {
-        btn.classList.toggle("active", btn.getAttribute("data-mode") === mode);
-      });
+    function selectRegister(reg) {
+      activeRegister = reg;
+      const bM = document.getElementById("btnMasc");
+      const bF = document.getElementById("btnFem");
+      if (reg === 'masculine') {
+        bM.className = 'reg-btn active masc';
+        bF.className = 'reg-btn fem';
+      } else {
+        bM.className = 'reg-btn masc';
+        bF.className = 'reg-btn active fem';
+      }
     }
 
-    function playAudio() {
-      const text = document.getElementById("outJapanese").innerText;
-      if (!text) return;
-      const utterance = new SpeechSynthesisUtterance(text);
+    // Pronunciation via Web Speech API
+    function speakJapanese() {
+      if (!textToSpeak) return;
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(textToSpeak);
       utterance.lang = "ja-JP";
-      utterance.rate = 0.9;
+      utterance.rate = 0.85;
+
+      const voices = window.speechSynthesis.getVoices();
+      const jaVoice = voices.find(v => v.lang.startsWith("ja"));
+      if (jaVoice) utterance.voice = jaVoice;
+
       window.speechSynthesis.speak(utterance);
     }
 
-    async function askTutor() {
-      const key = localStorage.getItem("gemini_tutor_api_key") || document.getElementById("apiKey").value.trim();
+    if (typeof speechSynthesis !== "undefined" && speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+    }
+
+    async function requestExplanation() {
+      const key = localStorage.getItem("jp_gemini_api_key") || document.getElementById("apiKeyInput").value.trim();
       if (!key) {
-        alert("Please set your Gemini API key under Settings first.");
-        document.getElementById("keyDrawer").style.display = "flex";
+        alert("Please configure your Gemini API key in Settings first.");
+        document.getElementById("settingsDrawer").style.display = "flex";
         return;
       }
 
-      const input = document.getElementById("promptInput").value.trim();
+      const input = document.getElementById("promptText").value.trim();
       if (!input) return;
 
-      const sendBtn = document.getElementById("sendBtn");
-      sendBtn.disabled = true;
-      sendBtn.innerText = "Analyzing...";
+      const btn = document.getElementById("submitBtn");
+      btn.disabled = true;
+      btn.innerText = "Generating...";
 
-      const systemInstruction = `You are a native Japanese tutor.
-Provide translations or replies tailored strictly to the requested speech register: ${activeMode.toUpperCase()}.
-- For Masculine: Use natural masculine pronouns (僕/俺), sentence-end particles (ぞ/ぜ/さ/かい), and informal plain-form standard expressions when casual, or polite standard business form when appropriate.
-- For Feminine: Use natural feminine pronouns (私), softer sentence endings (わ/の/ね/かしら), and gentle phrasing nuances.
-- Follow authentic Japanese punctuation (。、 「」).
+      const systemPrompt = `You are a native Japanese language tutor.
+Provide a Japanese translation and educational response tailored to the requested speech register: ${activeRegister.toUpperCase()}.
+- For Masculine register: Use natural masculine pronouns (僕/俺), standard plain forms (だ), and masculine ending particles (ぞ/ぜ/さ/かい) where appropriate.
+- For Feminine register: Use natural feminine pronouns (私), polite or softer sentence endings (わ/の/ね/かしら), and gentle sentence nuance.
+- Strictly observe authentic Japanese punctuation (。、 「」).
 
-You MUST return valid JSON ONLY with this schema:
+Return ONLY valid JSON with this exact schema:
 {
-  "japanese": "Japanese text with proper punctuation",
-  "romaji": "Hepburn romanization",
-  "phonetic": "Intuitive English-speaker syllable phonetic guide (e.g. Koh-nee-chee-wah)",
-  "explanation": "Breakdown of the register nuances, vocabulary, and grammar"
+  "japanese_html": "Japanese sentence with <ruby>Kanji<rt>furigana</rt></ruby> tags for reading assistance and full Japanese punctuation",
+  "plain_japanese": "Clean Japanese text without HTML tags for text-to-speech audio",
+  "romaji": "Standard Hepburn Romaji",
+  "phonetic": "English-intuitive syllable pronunciation guide (e.g. Koh-nee-chee-wah)",
+  "explanation": "Register nuance analysis, vocabulary breakdown, and grammatical points"
 }`;
 
       try {
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
+        const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${key}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             contents: [{ parts: [{ text: input }] }],
-            system_instruction: { parts: [{ text: systemInstruction }] },
+            system_instruction: { parts: [{ text: systemPrompt }] },
             generationConfig: { response_mime_type: "application/json" }
           })
         });
 
-        const data = await res.json();
-        const rawJson = data.candidates[0].content.parts[0].text;
-        const parsed = JSON.parse(rawJson);
+        const resData = await response.json();
 
-        document.getElementById("outJapanese").innerText = parsed.japanese;
+        // Catch backend or credential errors explicitly
+        if (resData.error) {
+          alert(`Gemini API Error (${resData.error.status || 'Code ' + resData.error.code}): ${resData.error.message}`);
+          return;
+        }
+
+        if (!resData.candidates || resData.candidates.length === 0) {
+          alert("No response generated. Please check your prompt or safety settings.");
+          return;
+        }
+
+        const parsed = JSON.parse(resData.candidates[0].content.parts[0].text);
+
+        textToSpeak = parsed.plain_japanese || parsed.japanese_html.replace(/<[^>]*>?/gm, '');
+
+        document.getElementById("outJapanese").innerHTML = parsed.japanese_html;
         document.getElementById("outRomaji").innerText = parsed.romaji;
         document.getElementById("outPhonetic").innerText = parsed.phonetic;
         document.getElementById("outExplanation").innerText = parsed.explanation;
-        document.getElementById("resultCard").style.display = "flex";
+
+        document.getElementById("outputContainer").style.display = "flex";
       } catch (err) {
-        alert("Error generating response: " + err.message);
+        alert("Client error: " + err.message);
       } finally {
-        sendBtn.disabled = false;
-        sendBtn.innerText = "Ask Tutor";
+        btn.disabled = false;
+        btn.innerText = "Ask Tutor";
       }
     }
   </script>
